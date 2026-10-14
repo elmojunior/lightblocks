@@ -25,10 +25,6 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-29 build-tools;29.0.3'
 
-      - name: Fix Android SDK metadata compatibility
-        run: |
-          find "$ANDROID_HOME" -name "package.xml" -exec sed -i '/<base-extension>/d' {} + || true
-
       - name: Set up JDK 8 (for project build)
         uses: actions/setup-java@v4
         with:
@@ -39,7 +35,21 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Generic Debug APK
-        run: ./gradlew android:assembleGenericDebug --stacktrace --console=plain --no-daemon --no-build-cache
+        run: |
+          ./gradlew android:assembleGenericDebug --stacktrace --no-daemon 2>&1 | tee build.log || {
+            echo "==================== BUILD FAILED ===================="
+            echo "=== TAIL OF BUILD LOG (LAST 60 LINES) ==="
+            tail -n 60 build.log
+            echo "======================================================"
+            exit 1
+          }
+
+      - name: Upload Build Log (if failed)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log
+          path: build.log
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
