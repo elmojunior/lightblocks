@@ -93,7 +93,7 @@ public class AboutScreen extends AbstractMenuDialog {
             storeButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.net.openURI(LightBlocksGame.gameStoreUrl);
+                    app.openOrShowUri(LightBlocksGame.gameStoreUrl);
                 }
             });
             addFocusableActor(storeButton);
@@ -114,7 +114,7 @@ public class AboutScreen extends AbstractMenuDialog {
             mailButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.net.openURI("mailto:" + LightBlocksGame.GAME_EMAIL);
+                    app.openOrShowUri("mailto:" + LightBlocksGame.GAME_EMAIL);
                 }
             });
             addFocusableActor(mailButton);
@@ -130,7 +130,7 @@ public class AboutScreen extends AbstractMenuDialog {
         openSourceButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.net.openURI(LightBlocksGame.SOURCECODE_URL);
+                app.openOrShowUri(LightBlocksGame.SOURCECODE_URL);
             }
         });
         addFocusableActor(openSourceButton);

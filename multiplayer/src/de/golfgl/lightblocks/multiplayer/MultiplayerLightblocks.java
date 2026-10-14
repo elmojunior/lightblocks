@@ -160,12 +160,20 @@ public class MultiplayerLightblocks extends LightBlocksGame {
             boolean foundJson = false;
 
             // theme-Verzeichnis anlegen, wenn nicht da
-            Gdx.files.local(Theme.FOLDER_NAME).mkdirs();
+            FileHandle targetDir = Gdx.files.local(Theme.FOLDER_NAME);
+            targetDir.mkdirs();
+            String canonicalTargetDir = targetDir.file().getCanonicalPath();
             theme.resetTheme();
 
             BufferedOutputStream dest = null;
             while ((entry = zis.getNextEntry()) != null) {
                 FileHandle file = Gdx.files.local(Theme.FOLDER_NAME + "/" + entry.getName());
+                String canonicalEntry = file.file().getCanonicalPath();
+                if (!canonicalEntry.startsWith(canonicalTargetDir + java.io.File.separator)
+                        && !canonicalEntry.equals(canonicalTargetDir)) {
+                    Gdx.app.log(Theme.LOG_TAG, "Security check: Skipping entry escaping target dir: " + entry.getName());
+                    continue;
+                }
                 if (entry.getName().equals(Theme.THEME_FILE_NAME))
                     foundJson = true;
 

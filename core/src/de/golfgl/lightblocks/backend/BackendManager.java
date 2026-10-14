@@ -218,42 +218,8 @@ public class BackendManager {
     }
 
     public void fetchMultiplayerMatches() {
-        // wenn zu oft gedrückt wird nichts machen
-        if (TimeUtils.timeSinceMillis(multiplayerMatchesLastFetchMs) < 1000 * 10L)
-            return;
-
-        if (!isFetchingMultiplayerMatches && hasUserId()) {
-            isFetchingMultiplayerMatches = true;
-            multiplayerMatchesLastFetchMs = TimeUtils.millis();
-
-            //TODO: sinceTime den ersten in der bisherigen Liste übergeben und dann im onSuccess die Listen
-            // zusammenführen
-
-            backendClient.listPlayerMatches(0, new BackendClient
-                    .IBackendResponse<Array<MatchEntity>>() {
-                @Override
-                public void onFail(int statusCode, String errorMsg) {
-                    isFetchingMultiplayerMatches = false;
-                    multiplayerMatchesLastFetchSuccessful = false;
-                    multiplayerLastFetchErrorConnectionProblem = statusCode == BackendClient.SC_NO_CONNECTION;
-                    multiplayerLastFetchError = errorMsg;
-                }
-
-                @Override
-                public void onSuccess(final Array<MatchEntity> retrievedData) {
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            isFetchingMultiplayerMatches = false;
-                            multiplayerMatchesLastFetchSuccessful = true;
-                            multiplayerMatchesList = retrievedData;
-                            multiplayerMatchesList.sort(new MultiplayerMatchComparator());
-                            multiplayerMatchesLastFetchMs = TimeUtils.millis();
-                        }
-                    });
-                }
-            });
-        }
+        // Disabled for offline mode
+        isFetchingMultiplayerMatches = false;
     }
 
     /**
@@ -302,50 +268,14 @@ public class BackendManager {
 
     public void fetchNewWelcomeResponseIfExpired(int expirationTimeSeconds, long drawnBlocks, int donatorState,
                                                  String pushProviderId, String pushToken) {
-        if (!isFetchingWelcomes && (lastWelcomeResponse == null || (TimeUtils.millis() + lastWelcomeResponse
-                .timeDelta - lastWelcomeResponse
-                .responseTime) / 1000 > expirationTimeSeconds)) {
-            isFetchingWelcomes = true;
-            backendClient.fetchWelcomeMessages(LightBlocksGame.GAME_VERSIONNUMBER, platformString, osString,
-                    drawnBlocks, donatorState, fetchWelcomesSinceTime, pushProviderId, pushToken,
-                    new BackendClient.IBackendResponse<BackendWelcomeResponse>() {
-                        @Override
-                        public void onFail(int statusCode, String errorMsg) {
-                            isFetchingWelcomes = false;
-                        }
-
-                        @Override
-                        public void onSuccess(BackendWelcomeResponse retrievedData) {
-                            lastWelcomeResponse = retrievedData;
-                            authenticated = lastWelcomeResponse.authenticated;
-                            isFetchingWelcomes = false;
-                            // reset cached multiplayer matches to force a refresh if there are
-                            // actions required or news available
-                            if (lastWelcomeResponse.competitionNewsAvailable)
-                                invalidateCachedMatches();
-                        }
-                    });
-        }
+        // Disabled for offline mode
+        isFetchingWelcomes = false;
     }
 
     private void fetchMultiplayerServerList() {
-        if (isFetchingMultiplayerServers)
-            return;
-
-        isFetchingMultiplayerServers = true;
-        backendClient.fetchMultiplayerServers(osString, new BackendClient.IBackendResponse<List<ServerAddress>>() {
-            @Override
-            public void onFail(int statusCode, String errorMsg) {
-                serverAddressList = new ArrayList<>();
-                isFetchingMultiplayerServers = false;
-            }
-
-            @Override
-            public void onSuccess(List<ServerAddress> retrievedData) {
-                serverAddressList = retrievedData;
-                isFetchingMultiplayerServers = false;
-            }
-        });
+        // Disabled for offline mode
+        serverAddressList = new ArrayList<>();
+        isFetchingMultiplayerServers = false;
     }
 
     /**
@@ -424,42 +354,7 @@ public class BackendManager {
      * Nur im Main Thread!
      */
     public void sendEnqueuedScores() {
-        synchronized (enqueuedScores) {
-            // ältere als 4 Stunden nicht absenden, sondern aussortieren
-            while (enqueuedScores.size >= 1 && TimeUtils.timeSinceMillis(enqueuedScores.first()
-                    .scoreGainedMillis) / 1000 > 60 * 60 * 4)
-                enqueuedScores.removeFirst();
-
-            if (backendClient.hasUserId() && currentlySendingScore == null && enqueuedScores.size >= 1) {
-                currentlySendingScore = enqueuedScores.removeFirst();
-
-                backendClient.postScore(currentlySendingScore, new BackendClient.IBackendResponse<Void>() {
-                    @Override
-                    public void onFail(int statusCode, String errorMsg) {
-                        // Ein Fehler ist irgendeine Art von Server- oder Verbindungsfehler (das Backend nimmt alle
-                        // Scores mit 200 an). Daher wieder einreihen für den nächsten Versuch, aber ans Ende
-                        synchronized (enqueuedScores) {
-                            // wieder zurück in die Queue und ein andermal probieren
-                            enqueuedScores.addLast(currentlySendingScore);
-                            currentlySendingScore = null;
-                        }
-                    }
-
-                    @Override
-                    public void onSuccess(Void retrievedData) {
-                        // und weiter mit dem nächsten Score in der Queue
-                        Gdx.app.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                invalidateScoreboardCache(currentlySendingScore.gameMode);
-                                currentlySendingScore = null;
-                                sendEnqueuedScores();
-                            }
-                        });
-                    }
-                });
-            }
-        }
+        // Disabled for offline mode
     }
 
     protected void invalidateScoreboardCache(String gameMode) {

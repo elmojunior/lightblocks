@@ -17,26 +17,21 @@ public class AndroidLauncher extends GeneralAndroidLauncher {
     @Override
     protected void initFlavor(LightBlocksGame game) {
 
-        // Create the Google Api Client with access to the Play Games services
-        gpgsClient = new MyGpgsClient();
-        gpgsClient.initialize(this, true);
+        // Disabled for offline mode:
+        // gpgsClient = new MyGpgsClient();
+        // gpgsClient.initialize(this, true);
+        // game.gpgsClient = gpgsClient;
 
-        game.gpgsClient = gpgsClient;
-
-        fcm = new FcmMessageProvider(this);
-        game.pushMessageProvider = fcm;
+        // fcm = new FcmMessageProvider(this);
+        // game.pushMessageProvider = fcm;
 
         // own donation purchase manager
         game.purchaseManager = new DonationPurchaseManager();
-
-        // crash reports
-        if (game.gameAnalytics instanceof AndroidGameAnalytics)
-            ((AndroidGameAnalytics) game.gameAnalytics).registerUncaughtExceptionHandler();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Gdx.app.addLifecycleListener(fcm);
+        // Gdx.app.addLifecycleListener(fcm); // Disabled for offline mode
     }
 }

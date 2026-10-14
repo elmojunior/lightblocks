@@ -119,7 +119,7 @@ public class IOSLauncher extends MyAppDelegate {
             @Override
             public void create() {
                 UIViewController uiViewController = ((IOSApplication) Gdx.app).getUIViewController();
-                gpgsClient = new GameCenterMultiplayerClient(uiViewController);
+                // gpgsClient = new GameCenterMultiplayerClient(uiViewController); // Disabled for offline mode
                 if (shouldEnableIcade()) {
                     IosControllerManager.enableICade(uiViewController, Selector.register("keyPress:"));
                 }
@@ -129,10 +129,11 @@ public class IOSLauncher extends MyAppDelegate {
 
         // Initialize platform dependant classes
         game.share = new IosShareHandler();
-        game.gameAnalytics = new IosGameAnalytics();
-        ((IosGameAnalytics) game.gameAnalytics).registerUncaughtExceptionHandler();
-        game.pushMessageProvider = new ApnsMessageProvider(true);
-        game.nsdHelper = new BonjourAdapter();
+        // Disabled for offline mode:
+        // game.gameAnalytics = new IosGameAnalytics();
+        // ((IosGameAnalytics) game.gameAnalytics).registerUncaughtExceptionHandler();
+        // game.pushMessageProvider = new ApnsMessageProvider(true);
+        game.nsdHelper = new de.golfgl.lightblocks.multiplayer.DisabledNsdHelper();
 
         // Gerätemodell wird für den Spielernamen benötigt
         LightBlocksGame.modelNameRunningOn = UIDevice.getCurrentDevice().getModel();

@@ -237,83 +237,8 @@ public class ThemeSettingsDialog extends ControllerMenuDialog {
             downloadButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    setDownloading(true);
-
-                    Net.HttpRequest httpGet = new Net.HttpRequest(Net.HttpMethods.GET);
-                    httpGet.setUrl(nickNameEditTable.getLabel().getText().toString());
-
-                    Gdx.net.sendHttpRequest(httpGet, new Net.HttpResponseListener() {
-                        @Override
-                        public void handleHttpResponse(Net.HttpResponse httpResponse) {
-
-                            if (httpResponse.getStatus().getStatusCode() != HttpStatus.SC_OK) {
-                                failed(new RuntimeException(httpResponse.getResultAsString()));
-                                return;
-                            }
-
-                            // Determine how much we have to download
-                            int length = Integer.parseInt(httpResponse.getHeader("Content-Length"));
-
-                            // We're going to download the file to external storage, create the streams
-                            InputStream is = httpResponse.getResultAsStream();
-                            ByteArrayOutputStream os = new ByteArrayOutputStream(length);
-
-                            byte[] bytes = new byte[1024];
-                            int count = -1;
-                            long read = 0;
-                            try {
-                                // Keep reading bytes and storing them until there are no more.
-                                while ((count = is.read(bytes, 0, bytes.length)) != -1) {
-                                    os.write(bytes, 0, count);
-                                    read += count;
-
-                                    // Update the UI with the download progress
-                                    final int progress = ((int) (((double) read / (double) length) * 100));
-
-                                    // Since we are downloading on a background thread, post a runnable to touch ui
-                                    Gdx.app.postRunnable(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            progressBar.setValue(progress);
-                                        }
-                                    });
-                                }
-
-                                os.close();
-
-                                final byte[] theme = os.toByteArray();
-
-                                // Done
-                                Gdx.app.postRunnable(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        hide();
-                                        app.doInstallTheme(new ByteArrayInputStream(theme));
-                                    }
-                                });
-
-                            } catch (IOException e) {
-                                failed(e);
-                            }
-                        }
-
-                        public void failed(final Throwable t) {
-                            Gdx.app.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new VetoDialog("Error downloading file: " + t.getMessage(), app.skin,
-                                            LightBlocksGame.nativeGameWidth * .9f).show(getStage());
-                                    setDownloading(false);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void cancelled() {
-                            setDownloading(false);
-                        }
-                    });
-
+                    new VetoDialog("Offline mode: downloading themes from URL is disabled.", app.skin,
+                            LightBlocksGame.nativeGameWidth * .9f).show(getStage());
                 }
             });
 

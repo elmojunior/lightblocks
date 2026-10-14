@@ -12,17 +12,12 @@ public class AndroidLauncher extends GeneralAndroidLauncher {
     protected void initFlavor(LightBlocksGame game) {
         LightBlocksGame.gameStoreUrl = "http://www.amazon.com/gp/mas/dl/android?p=de.golfgl.lightblocks";
 
-        // Create the Google Api Client with access to the Play Games services
-        MyGameCircleClient gsClient = new MyGameCircleClient();
-        gsClient.setAchievementsEnabled(true).setLeaderboardsEnabled(true).setWhisperSyncEnabled(true).intialize(this);
+        // Disabled for offline mode:
+        // MyGameCircleClient gsClient = new MyGameCircleClient();
+        // gsClient.setAchievementsEnabled(true).setLeaderboardsEnabled(true).setWhisperSyncEnabled(true).intialize(this);
+        // game.gpgsClient = gsClient;
 
-        game.gpgsClient = gsClient;
-
-        // Amazon unterstützt keine Crashreports, also Behelfsmaßnahmen
-        if (game.gameAnalytics != null && game.gameAnalytics instanceof AndroidGameAnalytics)
-            ((AndroidGameAnalytics) game.gameAnalytics).registerUncaughtExceptionHandler();
-
-        game.purchaseManager = new PurchaseManagerAndroidAmazon(this, 0);
+        game.purchaseManager = new DonationPurchaseManager();
     }
 
 }

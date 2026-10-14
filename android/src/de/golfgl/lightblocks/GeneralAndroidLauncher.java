@@ -141,16 +141,16 @@ abstract class GeneralAndroidLauncher extends AndroidApplication {
         // Initialize Android dependant classes
         game.share = new AndroidShareHandler();
         game.netUtils = new AndroidNetUtils(getContext());
-        game.gameAnalytics = new AndroidGameAnalytics();
+        // Disabled for offline mode:
+        // game.gameAnalytics = new AndroidGameAnalytics();
 
         initFlavor(game);
 
         // used for player name
         LightBlocksGame.modelNameRunningOn = Build.MODEL;
 
-        // Network Serice Discovery
-        this.nsdAdapter = new NsdAdapter(this);
-        game.nsdHelper = nsdAdapter;
+        // Network Service Discovery disabled for offline mode
+        game.nsdHelper = new de.golfgl.lightblocks.multiplayer.DisabledNsdHelper();
 
         initialize(game, config);
 

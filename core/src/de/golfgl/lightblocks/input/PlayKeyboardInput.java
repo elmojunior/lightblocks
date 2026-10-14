@@ -145,8 +145,9 @@ public class PlayKeyboardInput extends PlayScreenInput {
                     Gdx.input.vibrate(vibrationType.getVibrationLength());
                 } catch (Throwable throwable) {
                     // We catch here, just in case. There were some problems reported
-                    app.gameAnalytics.submitErrorEvent(GameAnalytics.ErrorType.warning,
-                            throwable.getMessage());
+                    if (app.gameAnalytics != null)
+                        app.gameAnalytics.submitErrorEvent(GameAnalytics.ErrorType.warning,
+                                throwable.getMessage());
                 }
             }
         }

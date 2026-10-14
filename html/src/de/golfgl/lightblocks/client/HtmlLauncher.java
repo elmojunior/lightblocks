@@ -81,8 +81,8 @@ public class HtmlLauncher extends GwtApplication {
                 .setGjScoreTableMapper(new GpgsHelper.GamejoltScoreboardMapper())
                 .setGjTrophyMapper(new GpgsHelper.GamejoltTrophyMapper());
 
-        lightBlocksGame.gpgsClient = gjClient;
-        lightBlocksGame.gameAnalytics = new GwtGameAnalytics();
+        lightBlocksGame.gpgsClient = new NoGameServiceClient();
+        lightBlocksGame.gameAnalytics = null;
 
         return lightBlocksGame;
     }

@@ -3,12 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.opensource.lightblocks">
 
-    <!-- Kryonet/Multiplayer, GameJolt and GameCircle -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-    <!-- IP Information and GameCircle -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Offline mode: INTERNET permission removed -->
 
     <uses-permission android:name="android.permission.VIBRATE"/>
 
@@ -16,11 +11,6 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true"/>
-
-    <!-- Permissions oben leiten ab dass es benötigt ist, ist es aber nicht -->
-    <uses-feature
-        android:name="android.hardware.wifi"
-        android:required="false"/>
 
     <!-- FireTV and Android TV supported -->
     <uses-feature

@@ -443,7 +443,7 @@ public class RoundOverScoreScreen extends AbstractMenuScreen {
         app.localPrefs.setDontAskForRating(true);
 
         if (LightBlocksGame.gameStoreUrl != null)
-            Gdx.net.openURI(LightBlocksGame.gameStoreUrl);
+            app.openOrShowUri(LightBlocksGame.gameStoreUrl);
     }
 
     @Override

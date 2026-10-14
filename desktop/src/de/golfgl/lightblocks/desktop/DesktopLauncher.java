@@ -65,7 +65,7 @@ public class DesktopLauncher {
         };
         game.gpgsClient = new MyTestClient();
         game.purchaseManager = new MyTestPurchaseManager();
-        game.nsdHelper = new DesktopNsdHelper();
+        game.nsdHelper = new de.golfgl.lightblocks.multiplayer.DisabledNsdHelper();
         new LwjglApplication(game, config);
     }
 

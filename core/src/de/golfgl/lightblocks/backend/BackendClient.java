@@ -70,7 +70,7 @@ public class BackendClient {
         final Net.HttpRequest httpRequest = buildRequest("v1/player/" + playerId, params);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<PlayerDetails>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<PlayerDetails>(callback) {
             @Override
             PlayerDetails parseJsonResponse(JsonValue json) {
                 return new PlayerDetails(json);
@@ -82,7 +82,7 @@ public class BackendClient {
         final Net.HttpRequest httpRequest = buildRequest("v1/replay/" + replayUri, null);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<String>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<String>(callback) {
             @Override
             String parseJsonResponse(JsonValue json) {
                 return json.getString("replay", null);
@@ -95,7 +95,7 @@ public class BackendClient {
         final Net.HttpRequest httpRequest = buildRequest("v1/nickname/" + nickname, null);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<List<PlayerDetails>>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<List<PlayerDetails>>(callback) {
             @Override
             List<PlayerDetails> parseJsonResponse(JsonValue json) {
                 List<PlayerDetails> playersList = new ArrayList<PlayerDetails>();
@@ -113,7 +113,7 @@ public class BackendClient {
         final Net.HttpRequest httpRequest = buildRequest("v1/matches/strongestPlayers", null);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<List<PlayerDetails>>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<List<PlayerDetails>>(callback) {
             @Override
             List<PlayerDetails> parseJsonResponse(JsonValue json) {
                 List<PlayerDetails> playersList = new ArrayList<PlayerDetails>();
@@ -131,7 +131,7 @@ public class BackendClient {
         final Net.HttpRequest httpRequest = buildRequest("v1/matches/similarStrengthPlayers/" + userId, null);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<List<RankedPlayerDetails>>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<List<RankedPlayerDetails>>(callback) {
             @Override
             List<RankedPlayerDetails> parseJsonResponse(JsonValue json) {
                 List<RankedPlayerDetails> playersList = new ArrayList<>();
@@ -159,7 +159,7 @@ public class BackendClient {
                 null);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<List<ScoreListEntry>>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<List<ScoreListEntry>>(callback) {
             @Override
             List<ScoreListEntry> parseJsonResponse(JsonValue json) {
                 List<ScoreListEntry> scoreList = new ArrayList<ScoreListEntry>();
@@ -200,7 +200,7 @@ public class BackendClient {
         final Net.HttpRequest httpRequest = buildRequest("v1/listservers", params);
         httpRequest.setMethod(Net.HttpMethods.GET);
 
-        Gdx.net.sendHttpRequest(httpRequest, new HttpResponseHandler<List<ServerAddress>>(callback) {
+        sendHttpRequest(httpRequest, new HttpResponseHandler<List<ServerAddress>>(callback) {
             @Override
             List<ServerAddress> parseJsonResponse(JsonValue json) {
                 List<ServerAddress> serverList = new ArrayList<>();
@@ -330,6 +330,13 @@ public class BackendClient {
                 return new MatchEntity(json);
             }
         }).cancelled();
+    }
+
+    private <T> void sendHttpRequest(Net.HttpRequest httpRequest, HttpResponseHandler<T> handler) {
+        // Offline mode: do not send any network requests
+        if (handler != null) {
+            handler.cancelled();
+        }
     }
 
     protected Net.HttpRequest buildRequest(String uri, @Nullable Map<String, String> params) {

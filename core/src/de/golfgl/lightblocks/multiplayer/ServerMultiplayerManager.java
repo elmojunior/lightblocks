@@ -46,20 +46,8 @@ public class ServerMultiplayerManager {
     }
 
     public void connect(String address) {
-        if (isClosed()) {
-            lastErrorMsg = null;
-            this.socket = WebSockets.newSocket(address);
-            socket.setSendGracefully(true);
-            socket.addListener(new SocketListener());
-            try {
-                socket.connect();
-                state = PlayState.CONNECTING;
-            } catch (Throwable t) {
-                lastErrorMsg = t.getMessage();
-                Gdx.app.error("WS", t.getMessage(), t);
-                clear();
-            }
-        }
+        lastErrorMsg = "Offline mode: network multiplayer is disabled.";
+        clear();
     }
 
     public void disconnect() {

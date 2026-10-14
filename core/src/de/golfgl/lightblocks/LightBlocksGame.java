@@ -120,7 +120,7 @@ public class LightBlocksGame extends Game implements IGameServiceListener, IPush
     public Player player;
     public IGameServiceClient gpgsClient;
     public MainMenuScreen mainMenuScreen;
-    public INsdHelper nsdHelper;
+    public INsdHelper nsdHelper = new de.golfgl.lightblocks.multiplayer.DisabledNsdHelper();
     public MyControllerMapping controllerMappings;
     public GameAnalytics gameAnalytics;
     public PurchaseManager purchaseManager;
@@ -168,8 +168,9 @@ public class LightBlocksGame extends Game implements IGameServiceListener, IPush
         // bevor gpgs angemeldet wird (wegen Cloud save)
         backendManager = new BackendManager(localPrefs);
 
-        if (pushMessageProvider != null && backendManager.hasUserId())
-            pushMessageProvider.initService(this);
+        // Disabled for offline mode
+        // if (pushMessageProvider != null && backendManager.hasUserId())
+        //     pushMessageProvider.initService(this);
 
         if (share == null)
             share = new ShareHandler();
@@ -226,19 +227,8 @@ public class LightBlocksGame extends Game implements IGameServiceListener, IPush
     }
 
     protected void initGameAnalytics(Preferences lbPrefs) {
-        if (gameAnalytics == null) {
-            gameAnalytics = new GameAnalytics();
-            gameAnalytics.setPlatformVersionString("1");
-        }
-
-        gameAnalytics.setGameBuildNumber(GAME_DEVMODE ? "debug" : String.valueOf(GAME_VERSIONNUMBER));
-        gameAnalytics.setCustom1(Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen) ?
-                "withTouch" : "noTouch");
-
-        gameAnalytics.setPrefs(lbPrefs);
-        gameAnalytics.setGameKey(GaHelper.GA_APP_KEY);
-        gameAnalytics.setGameSecretKey(GaHelper.GA_SECRET_KEY);
-        gameAnalytics.startSession();
+        // Disabled for offline mode
+        gameAnalytics = null;
     }
 
     public String getSoundAssetFilename(String name) {
@@ -325,7 +315,7 @@ public class LightBlocksGame extends Game implements IGameServiceListener, IPush
         if (gameAnalytics != null)
             gameAnalytics.startSession();
 
-        backendManager.sendEnqueuedScores();
+        // backendManager.sendEnqueuedScores(); // Disabled for offline mode
     }
 
     @Override
@@ -432,11 +422,11 @@ public class LightBlocksGame extends Game implements IGameServiceListener, IPush
      * @return ob es erlaubt ist, Weblinks zu öffnen (=> Android TV)
      */
     public boolean allowOpenWeblinks() {
-        return openWeblinks;
+        return false;
     }
 
     public void setOpenWeblinks(boolean openWeblinks) {
-        this.openWeblinks = openWeblinks;
+        this.openWeblinks = false;
     }
 
     public boolean canDonate() {
@@ -453,14 +443,8 @@ public class LightBlocksGame extends Game implements IGameServiceListener, IPush
      * @param uri
      */
     public void openOrShowUri(String uri) {
-        boolean success = false;
-
-        if (allowOpenWeblinks())
-            success = Gdx.net.openURI(uri);
-
-        if (!success) {
-            ((AbstractScreen) getScreen()).showDialog(TEXTS.format("errorOpenUri", uri));
-        }
+        // Disabled for offline mode: do not open web browser
+        ((AbstractScreen) getScreen()).showDialog(TEXTS.format("errorOpenUri", uri));
     }
 
     public float getDisplayDensityRatio() {

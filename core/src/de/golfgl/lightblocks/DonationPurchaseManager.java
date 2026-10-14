@@ -41,10 +41,7 @@ public class DonationPurchaseManager implements PurchaseManager {
 
     @Override
     public void purchase(String identifier) {
-        if (identifier.equals(DonationDialog.LIGHTBLOCKS_SUPPORTER))
-            Gdx.net.openURI("https://ko-fi.com/mrstahlfelge/");
-        else
-            Gdx.net.openURI("https://www.paypal.com/paypalme/MrStahlfelge");
+        // Disabled for offline mode: do not open donation links
     }
 
     @Override
