@@ -16,7 +16,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 1.8
+    - name: Set up JDK 17 (for Android SDK tools)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: Setup Android build environment
+      uses: android-actions/setup-android@v3
+      with:
+        packages: 'platform-tools platforms;android-29 build-tools;29.0.3'
+    - name: Set up JDK 1.8 (for project build)
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
@@ -27,10 +36,7 @@ jobs:
       run: ./gradlew desktop:build
     - name: Build server
       run: ./gradlew server:build
-    - name: Setup Android build environment
-      uses: android-actions/setup-android@v3
-      with:
-        packages: 'platform-tools platforms;android-29 build-tools;29.0.3'
+
     - name: Build Android
       run: ./gradlew android:assembleGenericDebug --stacktrace --console=plain
     - name: Upload Android APK
