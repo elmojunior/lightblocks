@@ -1,0 +1,48 @@
+name: Android CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (for Android SDK tools)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-29 build-tools;29.0.3'
+
+      - name: Fix Android SDK metadata compatibility
+        run: |
+          find "$ANDROID_HOME" -name "package.xml" -exec sed -i '/<base-extension>/d' {} + || true
+
+      - name: Set up JDK 8 (for project build)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Generic Debug APK
+        run: ./gradlew android:assembleGenericDebug --stacktrace --console=plain --no-daemon --no-build-cache
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightblocks-generic-debug-apk
+          path: "android/build/outputs/apk/**/*.apk"
