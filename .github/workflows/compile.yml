@@ -29,11 +29,11 @@ jobs:
     - name: Setup Android build environment
       uses: android-actions/setup-android@v2.0.2
     - name: Build Android
-      run: ./gradlew android:buildGenericDebug --stacktrace
+      run: ./gradlew android:assembleGenericDebug --stacktrace
     - name: Upload Android APK
       uses: actions/upload-artifact@v4
       with:
         name: lightblocks-generic-debug-apk
-        path: android/build/outputs/apk/**/*.apk
+        path: "**/*.apk"
     - name: Build HTML
       run: ./gradlew html:compileGwt
