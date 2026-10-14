@@ -68,7 +68,7 @@ task copyAndroidNatives {
         file("libs/x86_64/").mkdirs()
         file("libs/x86/").mkdirs()
 
-        configurations.natives.copy().files.each { jar ->
+        configurations.natives.files.each { jar ->
             def outputDir = null
             if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
             if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
@@ -113,12 +113,3 @@ task run(type: Exec) {
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'de.golfgl.lightblocks/de.golfgl.lightblocks.AndroidLauncher'
 }
 
-apply plugin: 'com.google.gms.google-services'
-
-// Deaktivieren für alle außer google
-android.applicationVariants.all { variant ->
-    if (!variant.name.startsWith('google')) {
-        project.logger.warn('Google services not applied for ' + variant.name)
-        project.tasks.getByName('process' + variant.name.capitalize() + 'GoogleServices').enabled = false
-    }
-}
